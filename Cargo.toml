@@ -46,7 +46,7 @@ async-signature = "0.3"
 base64 = "0.13"
 pem-rfc7468 = "0.7"
 x509-cert = { version = "0.2", features = ["pem", "builder"] }
-ssi-jwk = { git = "https://github.com/1Password/ssi.git", rev = "9889f9f368c3dfa8b706c85719c84c7353e2cdbb", default-features = false, features = ["secp256k1", "secp256r1", "ed25519"] }
+ssi-jwk = { git = "https://github.com/1Password/ssi.git", rev = "e3609af88236da76cb5f362769fe3df841210b50", default-features = false, features = ["secp256k1", "secp256r1", "ed25519"] }
 isomdl-macros = { version = "0.1", path = "macros" }
 clap = { version = "4", features = ["derive"], optional = true }
 clap-stdin = { version = "0.2", optional = true }
