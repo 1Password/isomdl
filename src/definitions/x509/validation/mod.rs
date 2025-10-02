@@ -93,7 +93,7 @@ fn mdl_validate_inner<'a: 'b, 'b>(
     };
 
     if trust_anchor_candidates.next().is_some() {
-        tracing::warn!("more than one trust anchor candidate found, using the first one");
+        log::warn!("more than one trust anchor candidate found, using the first one");
     }
 
     if let Some(error) = country_name_matches(document_signer, iaca) {
@@ -167,7 +167,7 @@ fn mdl_reader_one_step_validate(
     };
 
     if trust_anchor_candidates.next().is_some() {
-        tracing::warn!("more than one trust anchor candidate found, using the first one");
+        log::warn!("more than one trust anchor candidate found, using the first one");
     }
 
     // TODO: CRL or OCSP check on reader and reader CA.
@@ -197,21 +197,21 @@ fn find_trust_anchor_candidates<'a: 'b, 'b>(
                 subject.tbs_certificate.extensions.iter().flatten(),
             );
             if !valid {
-                tracing::warn!("key identifier extensions did not match");
+                log::warn!("key identifier extensions did not match");
             }
             valid
         })
         .filter(|candidate| {
             let valid = issuer_signed_subject(subject, candidate);
             if !valid {
-                tracing::warn!("issuer did not sign subject");
+                log::warn!("issuer did not sign subject");
             }
             valid
         })
         .filter(|candidate| {
             let errors = check_validity_period(candidate);
             if !errors.is_empty() {
-                tracing::warn!("certificate is not valid: {errors:?}");
+                log::warn!("certificate is not valid");
             }
             errors.is_empty()
         })

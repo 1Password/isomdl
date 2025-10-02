@@ -40,7 +40,7 @@ impl ExtensionValidator for ExtendedKeyUsageValidator {
         let extended_key_usage = ExtendedKeyUsage::from_der(bytes);
 
         if !extension.critical {
-            tracing::warn!("expected ExtendedKeyUsage extension to be critical",)
+            log::warn!("expected ExtendedKeyUsage extension to be critical",)
         }
 
         match extended_key_usage {

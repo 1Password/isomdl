@@ -344,12 +344,12 @@ impl SessionManagerEngaged {
 impl SessionManager {
     fn parse_request(&self, request: &[u8]) -> Result<DeviceRequest, PreparedDeviceResponse> {
         let request: ciborium::Value = cbor::from_slice(request).map_err(|error| {
-            tracing::error!("unable to decode DeviceRequest bytes as cbor: {}", error);
+            log::error!("unable to decode DeviceRequest bytes as cbor");
             PreparedDeviceResponse::empty(Status::CborDecodingError)
         })?;
 
         cbor::from_value(request).map_err(|error| {
-            tracing::error!("unable to validate DeviceRequest cbor: {}", error);
+            log::error!("unable to validate DeviceRequest cbor");
             PreparedDeviceResponse::empty(Status::CborValidationError)
         })
     }
@@ -371,7 +371,7 @@ impl SessionManager {
         };
 
         if request.version != DeviceRequest::VERSION {
-            tracing::error!(
+            log::error!(
                 "unsupported DeviceRequest version: {} ({} is supported)",
                 request.version,
                 DeviceRequest::VERSION
@@ -387,7 +387,7 @@ impl SessionManager {
                 validated_request.reader_authentication = AuthenticationStatus::Valid;
             } else {
                 validated_request.reader_authentication = AuthenticationStatus::Invalid;
-                tracing::error!("Reader authentication errors: {:#?}", outcome.errors);
+                log::error!("Reader authentication errors");
             }
 
             validated_request.common_name = outcome.common_name;

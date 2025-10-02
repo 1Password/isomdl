@@ -202,14 +202,14 @@ mod test {
         fn valid_mdoc_issuer_certificate_chain_is_validated() {
             let (root, signer) = super::setup();
 
-            tracing::debug!(
-                "issuer certificate:\n{}",
-                root.to_pem(Default::default()).unwrap()
-            );
-            tracing::debug!(
-                "signer certificate:\n{}",
-                signer.to_pem(Default::default()).unwrap()
-            );
+            // tracing::debug!(
+            //     "issuer certificate:\n{}",
+            //     root.to_pem(Default::default()).unwrap()
+            // );
+            // tracing::debug!(
+            //     "signer certificate:\n{}",
+            //     signer.to_pem(Default::default()).unwrap()
+            // );
 
             let trust_anchor_registry = TrustAnchorRegistry {
                 anchors: vec![TrustAnchor {

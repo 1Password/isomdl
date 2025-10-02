@@ -11,7 +11,7 @@ pub fn issuer_signed_subject(subject: &Certificate, issuer: &Certificate) -> boo
     let issuer_public_key: VerifyingKey<NistP256> = match public_key(issuer) {
         Ok(pk) => pk,
         Err(e) => {
-            tracing::error!("failed to decode issuer public key: {e:?}");
+            log::error!("failed to decode issuer public key");
             return false;
         }
     };
@@ -19,7 +19,7 @@ pub fn issuer_signed_subject(subject: &Certificate, issuer: &Certificate) -> boo
     let sig: Signature<NistP256> = match Signature::from_der(subject.signature.raw_bytes()) {
         Ok(sig) => sig,
         Err(e) => {
-            tracing::error!("failed to parse subject signature: {e:?}");
+            log::error!("failed to parse subject signature");
             return false;
         }
     };
@@ -27,7 +27,7 @@ pub fn issuer_signed_subject(subject: &Certificate, issuer: &Certificate) -> boo
     let tbs = match subject.tbs_certificate.to_der() {
         Ok(tbs) => tbs,
         Err(e) => {
-            tracing::error!("failed to parse subject tbs: {e:?}");
+            log::error!("failed to parse subject tbs");
             return false;
         }
     };
@@ -35,7 +35,7 @@ pub fn issuer_signed_subject(subject: &Certificate, issuer: &Certificate) -> boo
     match issuer_public_key.verify(&tbs, &sig) {
         Ok(()) => true,
         Err(e) => {
-            tracing::info!("subject certificate signature could not be validated: {e:?}");
+            log::info!("subject certificate signature could not be validated");
             false
         }
     }

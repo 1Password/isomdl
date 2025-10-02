@@ -57,7 +57,7 @@ impl ExtensionValidator for KeyUsageValidator {
         let key_usage = KeyUsage::from_der(bytes);
 
         if !extension.critical {
-            tracing::warn!("expected KeyUsage extension to be critical",)
+            log::warn!("expected KeyUsage extension to be critical",)
         }
 
         match key_usage {

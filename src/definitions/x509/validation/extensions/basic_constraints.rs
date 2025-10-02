@@ -36,7 +36,7 @@ impl ExtensionValidator for BasicConstraintsValidator {
         let mut errors = vec![];
 
         if !extension.critical {
-            tracing::warn!("expected BasicConstraints extension to be critical",)
+            log::warn!("expected BasicConstraints extension to be critical",)
         }
 
         let bytes = extension.extn_value.as_bytes();

@@ -43,7 +43,7 @@ where
     let issuer_skis = issuer_extensions.filter_map(|ext| {
         if ext.extn_id == SubjectKeyIdentifier::OID {
             SubjectKeyIdentifier::from_der(ext.extn_value.as_bytes())
-                .inspect_err(|e| tracing::warn!("failed to parse SubjectKeyIdentifier: {e}"))
+                .inspect_err(|_| log::warn!("failed to parse SubjectKeyIdentifier"))
                 .ok()
         } else {
             None
@@ -54,7 +54,7 @@ where
         .filter_map(|ext| {
             if ext.extn_id == AuthorityKeyIdentifier::OID {
                 AuthorityKeyIdentifier::from_der(ext.extn_value.as_bytes())
-                    .inspect_err(|e| tracing::warn!("failed to parse AuthorityKeyIdentifier: {e}"))
+                    .inspect_err(|_| log::warn!("failed to parse AuthorityKeyIdentifier"))
                     .ok()
             } else {
                 None
@@ -63,7 +63,7 @@ where
         .filter_map(|aki| aki.key_identifier)
         .any(|ki| {
             issuer_skis.clone().any(|ski| {
-                tracing::debug!("comparing key identifiers:\n\t{ki:?}\n\t{:?}", ski.0);
+                // tracing::debug!("comparing key identifiers:\n\t{ki:?}\n\t{:?}", ski.0);
                 ki == ski.0
             })
         })
@@ -71,7 +71,7 @@ where
 
 /// Validate IACA extensions according to 18013-5 Annex B.
 pub fn validate_iaca_extensions(certificate: &Certificate) -> Vec<Error> {
-    tracing::debug!("validating IACA extensions...");
+    log::debug!("validating IACA extensions...");
 
     let extensions = certificate.tbs_certificate.extensions.iter().flatten();
 
@@ -92,7 +92,7 @@ pub fn validate_iaca_extensions(certificate: &Certificate) -> Vec<Error> {
 
 /// Validate document signer extensions according to 18013-5 Annex B.
 pub fn validate_document_signer_certificate_extensions(certificate: &Certificate) -> Vec<Error> {
-    tracing::debug!("validating document signer certificate extensions...");
+    log::debug!("validating document signer certificate extensions...");
 
     let extensions = certificate.tbs_certificate.extensions.iter().flatten();
 
@@ -115,7 +115,7 @@ pub fn validate_document_signer_certificate_extensions(certificate: &Certificate
 
 /// Validate mdoc reader extensions according to 18013-5 Annex B.
 pub fn validate_mdoc_reader_certificate_extensions(certificate: &Certificate) -> Vec<Error> {
-    tracing::debug!("validating mdoc_reader certificate extensions...");
+    log::debug!("validating mdoc_reader certificate extensions...");
 
     let extensions = certificate.tbs_certificate.extensions.iter().flatten();
 
@@ -184,10 +184,10 @@ impl ExtensionValidators {
 
         for ext in extensions {
             if let Some(validator) = validators.iter_mut().find(|validator| {
-                tracing::debug!("searching for ext: '{}'", ext.extn_id);
+                // tracing::debug!("searching for ext: '{}'", ext.extn_id);
                 validator.oid() == ext.extn_id
             }) {
-                tracing::debug!("validating required extension: {}", ext.extn_id);
+                // tracing::debug!("validating required extension: {}", ext.extn_id);
                 validation_errors.extend(
                     validator
                         .validate(ext)
@@ -196,16 +196,13 @@ impl ExtensionValidators {
                 );
                 validator.found = true;
             } else if ext.critical {
-                tracing::debug!(
-                    "critical, non-required extension causing an error: {}",
-                    ext.extn_id
-                );
+                log::debug!("critical, non-required extension causing an error",);
                 validation_errors.push(format!(
                     "contains unknown critical extension: {}",
                     ext.extn_id
                 ));
             } else {
-                tracing::debug!("non-critical, non-required extension ignored: {ext:?}")
+                log::debug!("non-critical, non-required extension ignored")
             }
         }
 
